@@ -29,15 +29,20 @@ public class MyRealm1 implements Realm {
 	@Override
 	public AuthenticationInfo getAuthenticationInfo(AuthenticationToken token)
 			throws AuthenticationException {
-		String username = (String) token.getPrincipal(); // 得到用户名
-		String password = new String((char[]) token.getCredentials()); // 得到密码
+		// 得到用户名
+		String username = (String) token.getPrincipal(); 
+		
+		// 得到密码
+		String password = new String((char[]) token.getCredentials()); 
 		
 		if (!"zhang".equals(username)) {
-			throw new UnknownAccountException(); // 如果用户名错误
+			// 如果用户名错误
+			throw new UnknownAccountException(); 
 		}
 		
 		if (!"123".equals(password)) {
-			throw new IncorrectCredentialsException(); // 如果密码错误
+			// 如果密码错误
+			throw new IncorrectCredentialsException(); 
 		}
 		
 		// 如果身份认证验证成功，返回一个 AuthenticationInfo 实现；
