@@ -1,4 +1,4 @@
-package com.wangdh.shiro.demo.quickstart;
+package com.wangdh.shiro.demo.quickstart.config;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -6,26 +6,30 @@ import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.config.IniSecurityManagerFactory;
+import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.util.Factory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.wangdh.shiro.demo.quickstart.realm.MyRealm1;
+
 /**
- * Hello world!
+ * 在程序中配置shiro
+ * 
+ * @author PC
  *
  */
-public class App {
-	private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
+public class ProgramConfigApp {
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(ProgramConfigApp.class);
 
 	public static void main(String[] args) {
-		Factory<SecurityManager> factory = new IniSecurityManagerFactory(
-				"classpath:shiro.ini");
-		SecurityManager securityManager = factory.getInstance();
-
+		// 程序中配置验证的数据源
+		Realm realm = new MyRealm1();
+		SecurityManager securityManager = new DefaultSecurityManager(realm);
 		SecurityUtils.setSecurityManager(securityManager);
 
 		Subject currentUser = SecurityUtils.getSubject();
@@ -53,7 +57,7 @@ public class App {
 		} catch (AuthenticationException e) {
 			System.out.println("验证异常:" + e.getMessage());
 		}
-		LOGGER.info("RememberMe:" + currentUser.isRemembered());
+
 		if (currentUser.isAuthenticated()) {
 			LOGGER.info("User [" + currentUser.getPrincipal()
 					+ "] logged in successfully.");
@@ -73,8 +77,7 @@ public class App {
 				LOGGER.info("没有权限:" + url);
 			}
 		} else {
-			LOGGER.info("User [" + currentUser.getPrincipal()
-					+ "] logged in fail.");
+			System.out.println("login fail");
 		}
 
 		// 退出登录后，将session的信息清除掉
