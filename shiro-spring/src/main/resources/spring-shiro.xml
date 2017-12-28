@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd"
+       default-lazy-init="true">
+
+
+    <!-- 安全管理 -->
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <!-- 引用自定义的realm -->
+        <property name="realm" ref="authRealm"/>
+    </bean>
+
+    <!-- 自定义权限认证 -->
+    <bean id="authRealm" class="com.wangdh.shiro.spring.interceptor.ShiroRealm">
+    </bean>
+
+    <!-- 此bean要被web.xml引用,和web.xml中的filtername同名 -->
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <property name="securityManager" ref="securityManager"/>
+
+        <!-- 没有认证返回地址 -->
+        <property name="loginUrl" value="/index2.jsp" />
+
+        <!-- 没有授权返回地址 -->
+        <property name="unauthorizedUrl" value="/index2.jsp" />
+        <property name="filterChainDefinitions">
+            <!-- **代表任意子目录 -->
+            <value>
+                /login/** = anon
+                /user/** = authc,roles[admin]
+                /test/** = authc,perms
+            </value>
+        </property>
+    </bean>
+
+    <!-- 用户授权/认证信息Cache, 采用EhCache  缓存 -->
+    <bean id="shiroEhcacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
+    </bean>
+
+    <!-- 保证实现了Shiro内部lifecycle函数的bean执行 -->
+    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
+
+    <!-- 生成代理，通过代理进行控制 -->
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
+          depends-on="lifecycleBeanPostProcessor">
+    </bean>
+
+    <!-- 安全管理器 -->
+    <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+        <property name="securityManager" ref="securityManager"/>
+    </bean>
+</beans>

@@ -9,7 +9,8 @@
 	<modules>
 		<module>shiro-demo-quickstart</module>
 		<module>shiro-demo-spring</module>
-	</modules>
+        <module>shiro-spring</module>
+    </modules>
 
 	<properties>
 		<junit.version>4.9</junit.version>
